@@ -12,6 +12,14 @@ android {
             assets.srcDirs = ['assets']
         }
     }
+    signingConfigs {
+        config {
+            keyAlias "key0"
+            keyPassword '111111'
+            storeFile file('../test_keystore.jks')
+            storePassword '111111'
+        }
+    }
 
     defaultConfig {
         applicationId "com.av.mediajourney"
@@ -21,6 +29,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
 
     buildTypes {

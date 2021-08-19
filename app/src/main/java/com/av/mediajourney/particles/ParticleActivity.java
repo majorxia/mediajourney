@@ -2,6 +2,7 @@ package com.av.mediajourney.particles;
 
 import android.app.Activity;
 import android.drm.DrmStore;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,9 @@ public class ParticleActivity extends Activity{
         glSurfaceView = findViewById(R.id.glSurfaceView);
 
         glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setZOrderOnTop(true);
+        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        glSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
         glSurfaceView.setRenderer(new ParticlesRender(this));
     }
 

@@ -19,11 +19,6 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".image.ImageActivity"/>
         <activity android:name=".audiorecord.AudioRecordActivity"/>
@@ -41,7 +36,12 @@
 <!--        <activity android:name=".particles.android.ParticlesActivity" />-->
 <!--        <activity android:name=".particles.skybox.ParticlesSkyBoxActivity" />-->
 <!--        <activity android:name=".particles.heightmap.ParticlesHeightMapActivity" />-->
-        <activity android:name=".particles.ParticleActivity" />
+        <activity android:name=".particles.ParticleActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".opengl.gpuimage.GpuImageActivity" />
         <activity android:name=".bezier.BezierActivity" />
         <activity android:name=".bezier.BezierMainActivity" />
