@@ -12,14 +12,12 @@ public class SnowFlakeSystem {
     private final int POSITION_COMPONENT_COUNT = 3;
     //颜色 rgb
     private final int COLOR_COMPONENT_COUNT = 3;
-    //运动矢量 xyz
-    private final int VECTOR_COMPONENT_COUNT = 3;
     //开始时间
     private final int PARTICLE_START_TIME_COMPONENT_COUNT = 1;
 
 
     private final int TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT
-            + VECTOR_COMPONENT_COUNT + PARTICLE_START_TIME_COMPONENT_COUNT;
+            + PARTICLE_START_TIME_COMPONENT_COUNT;
 
     //步长
     private final int STRIDE = TOTAL_COMPONENT_COUNT * VertexArray.BYTES_PER_FLOAT;
@@ -71,16 +69,17 @@ public class SnowFlakeSystem {
         particles[currentOffset++] = Color.green(color) / 255f;
         particles[currentOffset++] = Color.blue(color) / 255f;
 
-        //填充 运动矢量
-//        particles[currentOffset++] = direction.x;
-//        particles[currentOffset++] = direction.y;
-//        particles[currentOffset++] = direction.z;
-
         //填充粒子开始时间
         particles[currentOffset++] = particStartTime;
 
         //把新增的粒子添加到顶点数组FloatBuffer中
         vertexArray.updateBuffer(particles, particleOffset, TOTAL_COMPONENT_COUNT);
+    }
+
+    public void updateSnowFlake() {
+        for (int i = 0; i < maxParticleCount; i ++) {
+
+        }
     }
 
     public void bindData(ParticleShaderProgram program) {
@@ -94,11 +93,6 @@ public class SnowFlakeSystem {
                 program.getaColorLocation(),
                 COLOR_COMPONENT_COUNT, STRIDE);
         dataOffset +=COLOR_COMPONENT_COUNT;
-
-        vertexArray.setVertexAttributePointer(dataOffset,
-                program.getaDirectionLocation(),
-                VECTOR_COMPONENT_COUNT, STRIDE);
-        dataOffset +=VECTOR_COMPONENT_COUNT;
 
         vertexArray.setVertexAttributePointer(dataOffset,
                 program.getaPatricleStartTimeLocation(),

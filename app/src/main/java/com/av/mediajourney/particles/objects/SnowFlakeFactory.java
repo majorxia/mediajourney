@@ -27,6 +27,16 @@ public class SnowFlakeFactory {
         }
     }
 
+    public void updateSnow(SnowFlakeSystem SnowFlakeSystem, float curTime) {
+        for (int i = 0; i < 100; i ++ ) {
+            SnowFlakeSystem.addParticle(new Geometry.Point(mRandom.nextFloat(), 0.5f, 0f),
+                    Color.HSVToColor(hsv),
+                    null,
+                    curTime
+            );
+        }
+    }
+
     public void addSnowFlakes(SnowFlakeSystem SnowFlakeSystem, Geometry.Point position, float curTime) {
 
 
