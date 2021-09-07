@@ -37,7 +37,7 @@ public class ShaderHelper {
             while (-1 != (count = is.read(buffer))) {
                 stringBuilder.append(new String(buffer, 0, count));
             }
-            Log.i(TAG, "loadAsset: " + stringBuilder);
+            // Log.i(TAG, "loadAsset: " + stringBuilder);
             String result = stringBuilder.toString().replaceAll("\\r\\n", "\n");
             Log.i(TAG, "loadAsset: 22=" + result);
             return result;
@@ -73,6 +73,7 @@ public class ShaderHelper {
             Log.i(TAG, "loadShader: status[0]=" + status[0]);
             //如果失败，释放资源
             if (status[0] == 0) {
+                Log.w(TAG, "loadShader: failed");
                 GLES20.glDeleteShader(shader);
                 return 0;
             }

@@ -16,7 +16,9 @@ void main(){
     //重力或者阻力因子，随着时间的推移越来越大
     float gravityFactor = v_ElapsedTime * v_ElapsedTime / 9.8;
     //当前的运动到的位置 粒子起始位置+（运动矢量*持续时间）
-    vec3 curPosition = a_Position + (a_Direction * v_ElapsedTime);
+    // vec3 curPosition = a_Position + (a_Direction * v_ElapsedTime);
+    // vec3 curPosition = a_Position +  v_ElapsedTime;
+    vec3 curPosition = vec3(a_Position.x + cos(v_ElapsedTime), a_Position.y + v_ElapsedTime, a_Position.z);
     //减去重力或阻力的影响
     curPosition.y -= gravityFactor;
 

@@ -7,7 +7,7 @@ import com.av.mediajourney.particles.data.VertexArray;
 import com.av.mediajourney.particles.programs.ParticleShaderProgram;
 import com.av.mediajourney.particles.util.Geometry;
 
-public class ParticleSystem {
+public class SnowFlakeSystem {
     //位置 xyz
     private final int POSITION_COMPONENT_COUNT = 3;
     //颜色 rgb
@@ -36,7 +36,7 @@ public class ParticleSystem {
     //VBO
     private final VertexArray vertexArray;
 
-    public ParticleSystem(int maxParticleCount) {
+    public SnowFlakeSystem(int maxParticleCount) {
         this.particles = new float[maxParticleCount * TOTAL_COMPONENT_COUNT];
         this.maxParticleCount = maxParticleCount;
         this.vertexArray = new VertexArray(particles);

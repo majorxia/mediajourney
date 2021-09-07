@@ -12,6 +12,8 @@ import com.av.mediajourney.particles.android.util.MatrixHelper;
 import com.av.mediajourney.particles.objects.ParticleFireworksExplosion;
 import com.av.mediajourney.particles.objects.ParticleShooter;
 import com.av.mediajourney.particles.objects.ParticleSystem;
+import com.av.mediajourney.particles.objects.SnowFlakeFactory;
+import com.av.mediajourney.particles.objects.SnowFlakeSystem;
 import com.av.mediajourney.particles.programs.ParticleShaderProgram;
 import com.av.mediajourney.particles.util.Geometry;
 
@@ -34,6 +36,8 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     private ParticleShooter mParticleShooter;
     private int mTextureId;
     private ParticleFireworksExplosion particleFireworksExplosion;
+    private SnowFlakeFactory snowFlakeFactory;
+    private SnowFlakeSystem  mSnowFlakeSystem;
 
     public ParticlesRender(Context context) {
         this.mContext = context;
@@ -56,7 +60,9 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         mProgram = new ParticleShaderProgram(mContext);
 
         //定义粒子系统 最大包含1w个粒子，超过最大之后复用最前面的
-        mParticleSystem = new ParticleSystem(10000);
+        mParticleSystem = new ParticleSystem(5);
+
+        mSnowFlakeSystem = new SnowFlakeSystem(5);
 
         //粒子系统开始时间
         mSystemStartTimeNS = System.nanoTime();
@@ -69,6 +75,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         mTextureId = TextureHelper.loadTexture(mContext, R.drawable.particle_texture);
 
         particleFireworksExplosion = new ParticleFireworksExplosion();
+        snowFlakeFactory = new SnowFlakeFactory();
         random = new Random();
     }
 
@@ -85,6 +92,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 viewMatrix, 0);
     }
 
+    private boolean added = false;
 
     @Override
     public void onDrawFrame(GL10 gl) {
@@ -100,22 +108,28 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
 
 
         //烟花爆炸粒子发生器 添加粒子
+/*
         particleFireworksExplosion.addExplosion(
                 mParticleSystem,
                 new Geometry.Point(
-                        0,
+                        random.nextFloat(),
                         1f ,
                         0),
-//                color,
                 curTime);
+*/
+
+        if (!added) {
+            snowFlakeFactory.addSnow(mSnowFlakeSystem, curTime);
+            added = true;
+        }
 
         //使用Program
         mProgram.useProgram();
         //设置Uniform变量
         mProgram.setUniforms(viewProjectionMatrix,curTime,mTextureId);
         //设置attribute变量
-        mParticleSystem.bindData(mProgram);
+        mSnowFlakeSystem.bindData(mProgram);
         //开始绘制粒子
-        mParticleSystem.draw();
+        mSnowFlakeSystem.draw();
     }
 }
