@@ -99,6 +99,9 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        if (!mEnabled)
+            return;
+
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         //当前（相对）时间 单位秒
@@ -137,5 +140,10 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         mSnowFlakeSystem.bindData(mProgram);
         //开始绘制粒子
         mSnowFlakeSystem.draw();
+    }
+
+    private boolean mEnabled = false;
+    public void setEnable(boolean enabled) {
+        mEnabled = enabled;
     }
 }
