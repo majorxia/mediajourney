@@ -25,6 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 import static android.opengl.Matrix.multiplyMM;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.translateM;
+import static com.av.mediajourney.particles.objects.SnowFlakeSystem.MAX_SNOW_FLAKES;
 
 public class ParticlesRender implements GLSurfaceView.Renderer {
 
@@ -62,7 +63,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         //定义粒子系统 最大包含1w个粒子，超过最大之后复用最前面的
         mParticleSystem = new ParticleSystem(5);
 
-        mSnowFlakeSystem = new SnowFlakeSystem(5);
+        mSnowFlakeSystem = new SnowFlakeSystem(MAX_SNOW_FLAKES);
 
         //粒子系统开始时间
         mSystemStartTimeNS = System.nanoTime();
@@ -121,6 +122,8 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         if (!added) {
             snowFlakeFactory.addSnow(mSnowFlakeSystem, curTime);
             added = true;
+        } else {
+            mSnowFlakeSystem.updateSnowFlake(curTime);
         }
 
         //使用Program

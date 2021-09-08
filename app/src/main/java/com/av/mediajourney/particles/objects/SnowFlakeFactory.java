@@ -7,6 +7,8 @@ import com.av.mediajourney.particles.util.Geometry;
 
 import java.util.Random;
 
+import static com.av.mediajourney.particles.objects.SnowFlakeSystem.MAX_SNOW_FLAKES;
+
 public class SnowFlakeFactory {
     private       float[] mDirectionVector = {0f, 0f, 0.3f, 1f};
     private       float[] mResultVector    = new float[4];
@@ -18,8 +20,8 @@ public class SnowFlakeFactory {
 
     public void addSnow(SnowFlakeSystem SnowFlakeSystem, float curTime) {
 
-        for (int i = 0; i < 100; i ++ ) {
-            SnowFlakeSystem.addParticle(new Geometry.Point(mRandom.nextFloat(), 0.5f, 0f),
+        for (int i = 0; i < MAX_SNOW_FLAKES; i ++ ) {
+            SnowFlakeSystem.addParticle(new Geometry.Point(mRandom.nextFloat() * 3, 3f, 0f),
                     Color.HSVToColor(hsv),
                     null,
                     curTime

@@ -18,9 +18,10 @@ void main(){
     //当前的运动到的位置 粒子起始位置+（运动矢量*持续时间）
     // vec3 curPosition = a_Position + (a_Direction * v_ElapsedTime);
     // vec3 curPosition = a_Position +  v_ElapsedTime;
-    vec3 curPosition = vec3(a_Position.x + cos(v_ElapsedTime), a_Position.y + v_ElapsedTime, a_Position.z);
+    // vec3 curPosition = vec3(a_Position.x + cos(v_ElapsedTime), a_Position.y + v_ElapsedTime, a_Position.z);
+    vec3 curPosition = a_Position;
     //减去重力或阻力的影响
-    curPosition.y -= gravityFactor;
+    //curPosition.y -= gravityFactor;
 
     //把当前位置通过内置变量传给片元着色器
 //    gl_Position =  vec4(curPosition,1.0);

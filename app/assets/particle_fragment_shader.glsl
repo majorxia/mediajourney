@@ -10,6 +10,7 @@ void main(){
     //gl_FragColor = vec4(v_Color/v_ElapsedTime, 1.0);
 
     //通过内置函数texture2D和原来的fragcolor相乘
-    gl_FragColor = vec4(v_Color/v_ElapsedTime, 1.0) * texture2D(u_TextureUnit, gl_PointCoord);
+    // gl_FragColor = vec4(v_Color/v_ElapsedTime, 1.0) * texture2D(u_TextureUnit, gl_PointCoord);
+    gl_FragColor = texture2D(u_TextureUnit, gl_PointCoord);
 
 }
