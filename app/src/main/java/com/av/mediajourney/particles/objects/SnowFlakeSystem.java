@@ -11,23 +11,28 @@ import com.av.mediajourney.particles.util.Geometry;
 import java.util.Random;
 
 public class SnowFlakeSystem {
-    private static final String TAG = "SnowFlakeSystem";
+    private static final String TAG                                 = "SnowFlakeSystem";
     //位置 xyz
-    private final int POSITION_COMPONENT_COUNT            = 3;
+    private final        int    POSITION_COMPONENT_COUNT            = 3;
     //颜色 rgb
-    private final int COLOR_COMPONENT_COUNT               = 3;
+    private final        int    COLOR_COMPONENT_COUNT               = 3;
     //开始时间
-    private final int PARTICLE_START_TIME_COMPONENT_COUNT = 1;
+    private final        int    PARTICLE_START_TIME_COMPONENT_COUNT = 1;
+    // type
+    private final        int    PARTICLE_TRACE_TYPE_COMPONENT_COUNT = 1;
 
-    private final Random  mRandom          = new Random();
-    public static final int MAX_SNOW_FLAKES = 20;
+    private final       Random mRandom         = new Random();
+    public static final int    MAX_SNOW_FLAKES = 60;
 
-    private final int TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT
-            + PARTICLE_START_TIME_COMPONENT_COUNT;
+    private final int TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT
+            + COLOR_COMPONENT_COUNT
+            + PARTICLE_START_TIME_COMPONENT_COUNT
+            + PARTICLE_TRACE_TYPE_COMPONENT_COUNT;
 
     //步长
     private final int STRIDE = TOTAL_COMPONENT_COUNT * VertexArray.BYTES_PER_FLOAT;
 
+    private final int SNOW_ENABLE_MASK = 1 << 10;
 
     //粒子游标
     private       int         nextParticle;
@@ -54,7 +59,7 @@ public class SnowFlakeSystem {
      * @param direction       运动矢量
      * @param particStartTime 开始时间
      */
-    public void addParticle(Geometry.Point position, int color, Geometry.Vector direction, float particStartTime) {
+    public void addParticle(Geometry.Point position, int color, Geometry.Vector direction, float particStartTime, int type) {
         final int particleOffset = nextParticle * TOTAL_COMPONENT_COUNT;
         int currentOffset = particleOffset;
         nextParticle++;
@@ -76,8 +81,9 @@ public class SnowFlakeSystem {
         particles[currentOffset++] = Color.blue(color) / 255f;
 
         //填充粒子开始时间
-        particles[currentOffset] = particStartTime;
+        particles[currentOffset++] = particStartTime;
 
+        particles[currentOffset] = (float) type;
         //把新增的粒子添加到顶点数组FloatBuffer中
         vertexArray.updateBuffer(particles, particleOffset, TOTAL_COMPONENT_COUNT);
     }
@@ -86,17 +92,37 @@ public class SnowFlakeSystem {
         for (int i = 0; i < maxParticleCount; i++) {
             final int particleOffset = i * TOTAL_COMPONENT_COUNT;
             int currentOffset = particleOffset;
+            int bits = (int) particles[currentOffset + 7];
+            boolean enabled = (bits & (SNOW_ENABLE_MASK)) != 0;
+            if (!enabled)
+                continue;
+
+            int type = (int) particles[currentOffset + 7] & ~SNOW_ENABLE_MASK;
 
             float elapsedTime = curTime - particles[i * TOTAL_COMPONENT_COUNT + 6];
             float gravityFactor = (float) (elapsedTime * elapsedTime / 9.8);
 
             float originX = particles[currentOffset];
-            particles[currentOffset] = (float) (particles[currentOffset] + Math.cos(elapsedTime) * 0.33);
+            if (type == 0)  // 左右摆动
+                particles[currentOffset] = (float) (particles[currentOffset] + Math.cos(elapsedTime) * 0.33);
+            else if (type == 1) {
+                // 向下
+            } else if (type == 2)  // 向左
+                particles[currentOffset] = (float) (particles[currentOffset] + 0.003);
+            else if (type == 3)  // 向左
+                particles[currentOffset] = (float) (particles[currentOffset] - 0.003);
 
-            currentOffset ++;
+            currentOffset++;
 
             float originY = particles[currentOffset];
-            particles[currentOffset] = (float) (particles[currentOffset] - gravityFactor);
+            float ratio = 0.55f;
+            if (type == 0)
+                ratio = 0.35f;
+            else if (type == 1)
+                ratio = 0.75f;
+
+            particles[currentOffset] = (float) (particles[currentOffset] - gravityFactor * ratio);
+            Log.i(TAG, "updateSnowFlake: y: " + particles[currentOffset]);
 
 //            particles[currentOffset] = mRandom.nextFloat();
 //            currentOffset ++;
@@ -105,8 +131,15 @@ public class SnowFlakeSystem {
             vertexArray.updateBuffer(particles, particleOffset, TOTAL_COMPONENT_COUNT);
 
             // recover the origin value, to avoid cumulative addition.
-            particles[currentOffset - 1] = originX;
+            if (type != 2 && type != 3)
+                particles[currentOffset - 1] = originX;
             particles[currentOffset] = originY;
+
+            if(particles[currentOffset] - gravityFactor * ratio < 0) {
+                particles[currentOffset] = 4;
+                particles[currentOffset - 1] = mRandom.nextFloat() * (mRandom.nextBoolean() ? 1 : -1);
+                particles[currentOffset + 5] = System.nanoTime() / 1000000000f;
+            }
         }
     }
 

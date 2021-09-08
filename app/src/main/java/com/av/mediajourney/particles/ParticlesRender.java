@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.Handler;
 
 import com.av.mediajourney.R;
 import com.av.mediajourney.opengl.texture.util.TextureHelper;
@@ -39,6 +40,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     private ParticleFireworksExplosion particleFireworksExplosion;
     private SnowFlakeFactory snowFlakeFactory;
     private SnowFlakeSystem  mSnowFlakeSystem;
+    private Handler mHandler = new Handler();
 
     public ParticlesRender(Context context) {
         this.mContext = context;
@@ -73,7 +75,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 Color.rgb(255, 50, 5),
                 new Geometry.Vector(0f, 0.8f, 0f));
 
-        mTextureId = TextureHelper.loadTexture(mContext, R.drawable.particle_texture);
+        mTextureId = TextureHelper.loadTexture(mContext, R.drawable.snow_white2);
 
         particleFireworksExplosion = new ParticleFireworksExplosion();
         snowFlakeFactory = new SnowFlakeFactory();
@@ -100,7 +102,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         //当前（相对）时间 单位秒
-        float curTime = (System.nanoTime() - mSystemStartTimeNS)/1000000000f;
+        float curTime = (System.nanoTime())/1000000000f;
 
         //粒发射器添加粒子
 //        mParticleShooter.addParticles(mParticleSystem,curTime,20);
@@ -120,7 +122,8 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
 */
 
         if (!added) {
-            snowFlakeFactory.addSnow(mSnowFlakeSystem, curTime);
+            snowFlakeFactory.addSnow(mSnowFlakeSystem, mHandler);
+//            snowFlakeFactory.addSnow(mSnowFlakeSystem, curTime);
             added = true;
         } else {
             mSnowFlakeSystem.updateSnowFlake(curTime);
