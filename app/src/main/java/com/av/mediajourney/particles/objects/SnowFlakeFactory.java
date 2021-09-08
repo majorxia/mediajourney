@@ -27,7 +27,7 @@ public class SnowFlakeFactory {
             handler.postDelayed(() -> {
                 float curTime = (System.nanoTime())/1000000000f;
                 for (int i = 0; i < MAX_SNOW_FLAKES / times; i ++ ) {
-                    SnowFlakeSystem.addParticle(new Geometry.Point(mRandom.nextFloat() * (mRandom.nextBoolean() ? 1 : -1) * 2, 4f, 0f),
+                    SnowFlakeSystem.addParticle(new Geometry.Point(mRandom.nextFloat() * (mRandom.nextBoolean() ? 1 : -1) * 2, 4f, mRandom.nextFloat()),
                             Color.HSVToColor(hsv),
                             null,
                             curTime,

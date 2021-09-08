@@ -29,6 +29,6 @@ void main(){
     //把当前位置和MVP矩阵相乘后，通过内置变量传给片元着色器
     gl_Position = u_Matrix * vec4(curPosition, 1.0);
 
-    gl_PointSize = 64.0;
+    gl_PointSize = 16.0 * gl_Position.z;
 }
 
