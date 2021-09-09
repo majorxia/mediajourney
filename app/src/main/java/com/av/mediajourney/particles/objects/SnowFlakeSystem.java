@@ -137,7 +137,7 @@ public class SnowFlakeSystem {
 
             if(particles[currentOffset] - gravityFactor * ratio < 0) {
                 particles[currentOffset] = 4;
-                particles[currentOffset - 1] = mRandom.nextFloat() * (mRandom.nextBoolean() ? 1 : -1);
+                particles[currentOffset - 1] = mRandom.nextFloat() * 2 * (mRandom.nextBoolean() ? 1 : -1);
                 particles[currentOffset + 5] = System.nanoTime() / 1000000000f;
             }
         }
