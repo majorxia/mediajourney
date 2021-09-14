@@ -13,6 +13,8 @@ import com.av.mediajourney.particles.android.util.MatrixHelper;
 import com.av.mediajourney.particles.objects.ParticleFireworksExplosion;
 import com.av.mediajourney.particles.objects.ParticleShooter;
 import com.av.mediajourney.particles.objects.ParticleSystem;
+import com.av.mediajourney.particles.objects.RainFactory;
+import com.av.mediajourney.particles.objects.RainSystem;
 import com.av.mediajourney.particles.objects.SnowFlakeFactory;
 import com.av.mediajourney.particles.objects.SnowFlakeSystem;
 import com.av.mediajourney.particles.programs.ParticleShaderProgram;
@@ -39,8 +41,10 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     private int mTextureId;
     private ParticleFireworksExplosion particleFireworksExplosion;
     private SnowFlakeFactory snowFlakeFactory;
-    private SnowFlakeSystem  mSnowFlakeSystem;
-    private Handler mHandler = new Handler();
+    private SnowFlakeSystem mSnowFlakeSystem;
+    private RainFactory rainFactory;
+    private RainSystem  rainSystem;
+    private Handler     mHandler = new Handler();
 
     public ParticlesRender(Context context) {
         this.mContext = context;
@@ -65,8 +69,6 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         //定义粒子系统 最大包含1w个粒子，超过最大之后复用最前面的
         mParticleSystem = new ParticleSystem(5);
 
-        mSnowFlakeSystem = new SnowFlakeSystem(MAX_SNOW_FLAKES);
-
         //粒子系统开始时间
         mSystemStartTimeNS = System.nanoTime();
 
@@ -78,7 +80,11 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         mTextureId = TextureHelper.loadTexture(mContext, R.drawable.snow_white2);
 
         particleFireworksExplosion = new ParticleFireworksExplosion();
+
         snowFlakeFactory = new SnowFlakeFactory();
+        mSnowFlakeSystem = new SnowFlakeSystem(MAX_SNOW_FLAKES);
+        rainFactory = new RainFactory();
+        rainSystem = new RainSystem(RainSystem.MAX_SNOW_FLAKES);
         random = new Random();
     }
 
@@ -124,22 +130,34 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 curTime);
 */
 
+/*
         if (!added) {
             snowFlakeFactory.addSnow(mSnowFlakeSystem, mHandler);
-//            snowFlakeFactory.addSnow(mSnowFlakeSystem, curTime);
             added = true;
         } else {
             mSnowFlakeSystem.updateSnowFlake(curTime);
+        }
+*/
+
+        if (!added) {
+            rainFactory.addRain(rainSystem, mHandler);
+            added = true;
+        } else {
+            rainSystem.updateRain(curTime);
         }
 
         //使用Program
         mProgram.useProgram();
         //设置Uniform变量
         mProgram.setUniforms(viewProjectionMatrix,curTime,mTextureId);
+/*
         //设置attribute变量
         mSnowFlakeSystem.bindData(mProgram);
         //开始绘制粒子
         mSnowFlakeSystem.draw();
+*/
+        rainSystem.bindData(mProgram);
+        rainSystem.draw();
     }
 
     private boolean mEnabled = false;
