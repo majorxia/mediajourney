@@ -21,8 +21,8 @@ public class RainSystem {
     // type
     private final        int    PARTICLE_TRACE_TYPE_COMPONENT_COUNT = 1;
 
-    private final       Random mRandom         = new Random();
-    public static final int    MAX_SNOW_FLAKES = 240;
+    private final       Random mRandom       = new Random();
+    public static final int    MAX_RAIN_NUMS = 80;
 
     private final int TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT
             + COLOR_COMPONENT_COUNT
@@ -33,6 +33,9 @@ public class RainSystem {
     private final int STRIDE = TOTAL_COMPONENT_COUNT * VertexArray.BYTES_PER_FLOAT;
 
     private final int SNOW_ENABLE_MASK = 1 << 10;
+
+    private float[] mRandoms;
+    private int mRandomIndex = 0;
 
     //粒子游标
     private       int         nextParticle;
@@ -49,6 +52,17 @@ public class RainSystem {
         this.particles = new float[maxParticleCount * TOTAL_COMPONENT_COUNT];
         this.maxParticleCount = maxParticleCount;
         this.vertexArray = new VertexArray(particles);
+
+        mRandoms = new float[100];
+        for (int i = 0; i < mRandoms.length; i ++ ) {
+            mRandoms[i] = mRandom.nextFloat() * (mRandom.nextBoolean() ? 1 : -1);
+        }
+    }
+
+    float nextRandom() {
+        if (mRandomIndex >= mRandoms.length)
+            mRandomIndex = 0;
+        return mRandoms[mRandomIndex++];
     }
 
     /**
@@ -116,14 +130,16 @@ public class RainSystem {
             currentOffset++;
 
             float originY = particles[currentOffset];
+/*
             float ratio = 0.55f;
             if (type == 0)
                 ratio = 0.35f;
             else if (type == 1)
                 ratio = 0.75f;
+*/
+            float ratio = 12.0f;
 
             particles[currentOffset] = (float) (particles[currentOffset] - gravityFactor * ratio);
-            Log.i(TAG, "updateSnowFlake: y: " + particles[currentOffset]);
 
 //            particles[currentOffset] = mRandom.nextFloat();
 //            currentOffset ++;
@@ -137,8 +153,8 @@ public class RainSystem {
             particles[currentOffset] = originY;
 
             if(particles[currentOffset] - gravityFactor * ratio < 0) {
-                particles[currentOffset] = 4;
-                particles[currentOffset - 1] = mRandom.nextFloat() * 2 * (mRandom.nextBoolean() ? 1 : -1);
+                particles[currentOffset] = 4 + Math.abs(nextRandom()) * 2;
+                particles[currentOffset - 1] = mRandom.nextFloat() * 2 * (nextRandom());
                 particles[currentOffset + 5] = System.nanoTime() / 1000000000f;
             }
         }

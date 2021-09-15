@@ -1,4 +1,5 @@
 package com.av.mediajourney.particles;
+// package com.mitv.tvhome.particles;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,7 +10,6 @@ import android.os.Handler;
 
 import com.av.mediajourney.R;
 import com.av.mediajourney.opengl.texture.util.TextureHelper;
-import com.av.mediajourney.particles.android.util.MatrixHelper;
 import com.av.mediajourney.particles.objects.ParticleFireworksExplosion;
 import com.av.mediajourney.particles.objects.ParticleShooter;
 import com.av.mediajourney.particles.objects.ParticleSystem;
@@ -56,6 +56,9 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
 
     private final float[] hsv = {0f, 1f, 1f};
     private Random random;
+    public static final int MODE_SNOW = 0;
+    public static final int MODE_RAIN = 1;
+    private int mRenderMode = MODE_RAIN;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -77,15 +80,19 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 Color.rgb(255, 50, 5),
                 new Geometry.Vector(0f, 0.8f, 0f));
 
-        mTextureId = TextureHelper.loadTexture(mContext, R.drawable.snow_white2);
+        if (mRenderMode == MODE_RAIN)
+            mTextureId = TextureHelper.loadTexture(mContext, R.drawable.rain);
+        else
+            mTextureId = TextureHelper.loadTexture(mContext, R.drawable.snow_white2);
 
         particleFireworksExplosion = new ParticleFireworksExplosion();
 
         snowFlakeFactory = new SnowFlakeFactory();
         mSnowFlakeSystem = new SnowFlakeSystem(MAX_SNOW_FLAKES);
         rainFactory = new RainFactory();
-        rainSystem = new RainSystem(RainSystem.MAX_SNOW_FLAKES);
+        rainSystem = new RainSystem(RainSystem.MAX_RAIN_NUMS);
         random = new Random();
+        setEnable(true);
     }
 
     @Override
@@ -102,6 +109,9 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     }
 
     private boolean added = false;
+    public void resume() {
+        added = false;
+    }
 
     @Override
     public void onDrawFrame(GL10 gl) {
@@ -130,34 +140,35 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 curTime);
 */
 
-/*
-        if (!added) {
-            snowFlakeFactory.addSnow(mSnowFlakeSystem, mHandler);
-            added = true;
-        } else {
-            mSnowFlakeSystem.updateSnowFlake(curTime);
-        }
-*/
-
-        if (!added) {
-            rainFactory.addRain(rainSystem, mHandler);
-            added = true;
-        } else {
-            rainSystem.updateRain(curTime);
+        if (mRenderMode == MODE_SNOW) {
+            if (!added) {
+                snowFlakeFactory.addSnow(mSnowFlakeSystem, mHandler);
+                added = true;
+            } else {
+                mSnowFlakeSystem.updateSnowFlake(curTime);
+            }
+        } else if (mRenderMode == MODE_RAIN) {
+            if (!added) {
+                rainFactory.addRain(rainSystem, mHandler);
+                added = true;
+            } else {
+                rainSystem.updateRain(curTime);
+            }
         }
 
         //使用Program
         mProgram.useProgram();
         //设置Uniform变量
         mProgram.setUniforms(viewProjectionMatrix,curTime,mTextureId);
-/*
-        //设置attribute变量
-        mSnowFlakeSystem.bindData(mProgram);
-        //开始绘制粒子
-        mSnowFlakeSystem.draw();
-*/
-        rainSystem.bindData(mProgram);
-        rainSystem.draw();
+        if (mRenderMode == MODE_SNOW) {
+            //设置attribute变量
+            mSnowFlakeSystem.bindData(mProgram);
+            //开始绘制粒子
+            mSnowFlakeSystem.draw();
+        } else if (mRenderMode == MODE_RAIN) {
+            rainSystem.bindData(mProgram);
+            rainSystem.draw();
+        }
     }
 
     private boolean mEnabled = false;
