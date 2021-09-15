@@ -1,5 +1,4 @@
 package com.av.mediajourney.particles;
-// package com.mitv.tvhome.particles;
 
 import android.content.Context;
 import android.graphics.Color;
