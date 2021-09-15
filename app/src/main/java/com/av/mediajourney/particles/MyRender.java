@@ -31,7 +31,7 @@ import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.translateM;
 import static com.av.mediajourney.particles.objects.SnowFlakeSystem.MAX_SNOW_FLAKES;
 
-public class ParticlesRender implements GLSurfaceView.Renderer {
+public class MyRender implements GLSurfaceView.Renderer {
 
     private final Context mContext;
 
@@ -49,7 +49,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     private GoldenParticleSystem goldenParticleSystem;
     private Handler     mHandler = new Handler();
 
-    public ParticlesRender(Context context) {
+    public MyRender(Context context) {
         this.mContext = context;
     }
 
