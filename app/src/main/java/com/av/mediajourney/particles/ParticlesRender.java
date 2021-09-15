@@ -9,6 +9,8 @@ import android.os.Handler;
 
 import com.av.mediajourney.R;
 import com.av.mediajourney.opengl.texture.util.TextureHelper;
+import com.av.mediajourney.particles.objects.GoldenParticleFactory;
+import com.av.mediajourney.particles.objects.GoldenParticleSystem;
 import com.av.mediajourney.particles.objects.ParticleFireworksExplosion;
 import com.av.mediajourney.particles.objects.ParticleShooter;
 import com.av.mediajourney.particles.objects.ParticleSystem;
@@ -43,6 +45,8 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     private SnowFlakeSystem mSnowFlakeSystem;
     private RainFactory rainFactory;
     private RainSystem  rainSystem;
+    private GoldenParticleFactory goldenParticleFactory;
+    private GoldenParticleSystem goldenParticleSystem;
     private Handler     mHandler = new Handler();
 
     public ParticlesRender(Context context) {
@@ -57,6 +61,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
     private Random random;
     public static final int MODE_SNOW = 0;
     public static final int MODE_RAIN = 1;
+    public static final int MODE_GOLDEN_PARTICLE = 2;
     private int mRenderMode = MODE_RAIN;
 
     @Override
@@ -81,7 +86,9 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
 
         if (mRenderMode == MODE_RAIN)
             mTextureId = TextureHelper.loadTexture(mContext, R.drawable.rain);
-        else
+        else if (mRenderMode == MODE_GOLDEN_PARTICLE)
+            mTextureId = TextureHelper.loadTexture(mContext, R.drawable.snow_white2);
+        else if (mRenderMode == MODE_SNOW)
             mTextureId = TextureHelper.loadTexture(mContext, R.drawable.snow_white2);
 
         particleFireworksExplosion = new ParticleFireworksExplosion();
@@ -90,6 +97,8 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         mSnowFlakeSystem = new SnowFlakeSystem(MAX_SNOW_FLAKES);
         rainFactory = new RainFactory();
         rainSystem = new RainSystem(RainSystem.MAX_RAIN_NUMS);
+        goldenParticleFactory = new GoldenParticleFactory();
+        goldenParticleSystem = new GoldenParticleSystem(GoldenParticleSystem.MAX_GOLDEN_PARTICLES);
         random = new Random();
         setEnable(true);
     }
@@ -122,23 +131,6 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         //当前（相对）时间 单位秒
         float curTime = (System.nanoTime())/1000000000f;
 
-        //粒发射器添加粒子
-//        mParticleShooter.addParticles(mParticleSystem,curTime,20);
-//          int color = Color.rgb(255, 50, 5);
-
-
-
-        //烟花爆炸粒子发生器 添加粒子
-/*
-        particleFireworksExplosion.addExplosion(
-                mParticleSystem,
-                new Geometry.Point(
-                        random.nextFloat(),
-                        1f ,
-                        0),
-                curTime);
-*/
-
         if (mRenderMode == MODE_SNOW) {
             if (!added) {
                 snowFlakeFactory.addSnow(mSnowFlakeSystem, mHandler);
@@ -147,6 +139,13 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 mSnowFlakeSystem.updateSnowFlake(curTime);
             }
         } else if (mRenderMode == MODE_RAIN) {
+            if (!added) {
+                rainFactory.addRain(rainSystem, mHandler);
+                added = true;
+            } else {
+                rainSystem.updateRain(curTime);
+            }
+        } else if (mRenderMode == MODE_GOLDEN_PARTICLE) {
             if (!added) {
                 rainFactory.addRain(rainSystem, mHandler);
                 added = true;
@@ -167,6 +166,8 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
         } else if (mRenderMode == MODE_RAIN) {
             rainSystem.bindData(mProgram);
             rainSystem.draw();
+        } else if (mRenderMode == MODE_GOLDEN_PARTICLE) {
+
         }
     }
 

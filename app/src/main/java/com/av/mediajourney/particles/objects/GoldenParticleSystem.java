@@ -2,7 +2,6 @@ package com.av.mediajourney.particles.objects;
 
 import android.graphics.Color;
 import android.opengl.GLES20;
-import android.util.Log;
 
 import com.av.mediajourney.particles.data.VertexArray;
 import com.av.mediajourney.particles.programs.ParticleShaderProgram;
@@ -10,8 +9,8 @@ import com.av.mediajourney.particles.util.Geometry;
 
 import java.util.Random;
 
-public class RainSystem {
-    private static final String TAG                      = "RainSystem";
+public class GoldenParticleSystem {
+    private static final String TAG                      = "GoldenParticleSystem";
     //位置 xyz
     private final        int    POSITION_COMPONENT_COUNT = 3;
     //颜色 rgb
@@ -22,7 +21,7 @@ public class RainSystem {
     private final        int    PARTICLE_TRACE_TYPE_COMPONENT_COUNT = 1;
 
     private final       Random mRandom       = new Random();
-    public static final int    MAX_RAIN_NUMS = 80;
+    public static final int    MAX_GOLDEN_PARTICLES = 80;
 
     private final int TOTAL_COMPONENT_COUNT = POSITION_COMPONENT_COUNT
             + COLOR_COMPONENT_COUNT
@@ -48,7 +47,7 @@ public class RainSystem {
     //VBO
     private final VertexArray vertexArray;
 
-    public RainSystem(int maxParticleCount) {
+    public GoldenParticleSystem(int maxParticleCount) {
         this.particles = new float[maxParticleCount * TOTAL_COMPONENT_COUNT];
         this.maxParticleCount = maxParticleCount;
         this.vertexArray = new VertexArray(particles);
